@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Days Together</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #141414;
+      color: #fff;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+    .stars { position: fixed; inset: 0; pointer-events: none; }
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 3px #fff, 0 0 8px #fff, 0 0 16px rgba(255,255,255,.9);
+      animation: twinkle var(--tw) ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .5; }
+    }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%; height: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 5%;
+    }
+    .card { max-width: 560px; width: 100%; }
+    .logo {
+      width: min(72%, 280px);
+      height: auto;
+      display: block;
+      margin: 0 auto 14px;
+    }
+    .since {
+      font-size: clamp(14px, 3.3vmin, 20px);
+      letter-spacing: .02em;
+      line-height: 1.35;
+    }
+    .count {
+      margin: 16px 0 6px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 650;
+      font-size: clamp(56px, 16vmin, 96px);
+      line-height: .9;
+      letter-spacing: -.04em;
+    }
+    .label {
+      font-size: clamp(14px, 3.2vmin, 18px);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .break {
+      margin-top: 16px;
+      font-size: clamp(12px, 2.8vmin, 15px);
+      color: #fff;
+      letter-spacing: .04em;
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+  <div class="wrap">
+    <div class="card">
+      <img class="logo" alt="FIRE" src="data:image/png;base64,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" />
+      <div class="since">TOGETHER SINCE FIRE CONFERENCE IN PHILLY (July 15-17,2022)</div>
+      <div class="count" id="days">—</div>
+      <div class="label">days together</div>
+      <div class="break" id="break"></div>
+    </div>
+  </div>
+  <script>
+    const START = new Date("2022-07-17T00:00:00-05:00");
+    const TZ = "America/Chicago";
+    const sky = document.getElementById("stars");
+    for (let i = 0; i < 700; i++) {
+      const s = document.createElement("i");
+      s.className = "star";
+      const size = Math.random() < 0.06 ? 3.2 : Math.random() < 0.22 ? 2.2 : 1.4;
+      s.style.width = size + "px";
+      s.style.height = size + "px";
+      s.style.left = Math.random() * 100 + "%";
+      s.style.top = Math.random() * 100 + "%";
+      s.style.setProperty("--tw", (2.4 + Math.random() * 3.6).toFixed(2) + "s");
+      sky.appendChild(s);
+    }
+
+    function ymd(date) {
+      const fmt = new Intl.DateTimeFormat("en-CA", {
+        timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit"
+      });
+      const [y, m, d] = fmt.format(date).split("-").map(Number);
+      return { y, m, d };
+    }
+
+    function diffYMD(from, to) {
+      let years = to.y - from.y;
+      let months = to.m - from.m;
+      let days = to.d - from.d;
+      if (days < 0) {
+        months -= 1;
+        const prev = new Date(Date.UTC(to.y, to.m - 1, 0)).getUTCDate();
+        days += prev;
+      }
+      if (months < 0) { years -= 1; months += 12; }
+      return { years, months, days };
+    }
+
+    function tick() {
+      const now = new Date();
+      const totalDays = Math.max(0, Math.floor((now - START) / 86400000));
+      document.getElementById("days").textContent = totalDays.toLocaleString("en-US");
+      const d = diffYMD({ y: 2022, m: 7, d: 17 }, ymd(now));
+      const bit = (n, one, many) => n + " " + (n === 1 ? one : many);
+      document.getElementById("break").textContent =
+        bit(d.years, "year", "years") + "  ·  " +
+        bit(d.months, "month", "months") + "  ·  " +
+        bit(d.days, "day", "days");
+    }
+    function loop() { tick(); requestAnimationFrame(loop); }
+    loop();
+  </script>
+</body>
+</html>
