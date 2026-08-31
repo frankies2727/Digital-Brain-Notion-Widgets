@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quote of the Day</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #141414;
+      color: #f5f5f5;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+    .stars { position: fixed; inset: 0; pointer-events: none; }
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 4px #fff, 0 0 10px rgba(255,255,255,.7);
+    }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%; height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 7%;
+    }
+    .card { max-width: 560px; width: 100%; text-align: left; }
+    .kicker {
+      font-size: clamp(10px, 2.3vmin, 12px);
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      opacity: .7;
+      margin-bottom: 14px;
+    }
+    .quote {
+      font-size: clamp(18px, 4.4vmin, 28px);
+      line-height: 1.35;
+      font-weight: 500;
+      letter-spacing: -.01em;
+    }
+    .quote::before { content: "“"; }
+    .quote::after { content: "”"; }
+    .who {
+      margin-top: 18px;
+      font-size: clamp(13px, 2.8vmin, 16px);
+      letter-spacing: .02em;
+    }
+    .who b { font-weight: 650; }
+    .who span {
+      display: block;
+      margin-top: 4px;
+      font-size: .86em;
+      opacity: .65;
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="kicker">Quote of the day</div>
+      <div class="quote" id="quote"></div>
+      <div class="who" id="who"></div>
+    </div>
+  </div>
+  <script>
+    const FALLBACK = [
+      { t: "Not everything that is faced can be changed, but nothing can be changed until it is faced.", a: "James Baldwin" },
+      { t: "The function of freedom is to free someone else.", a: "Toni Morrison" },
+      { t: "Your silence will not protect you.", a: "Audre Lorde" },
+      { t: "If they don’t give you a seat at the table, bring a folding chair.", a: "Shirley Chisholm" },
+      { t: "If there is no struggle, there is no progress.", a: "Frederick Douglass" },
+      { t: "It always seems impossible until it’s done.", a: "Nelson Mandela" },
+      { t: "I raise up my voice—not so I can shout, but so that those without a voice can be heard.", a: "Malala Yousafzai" },
+      { t: "All that you touch you Change. All that you Change Changes you.", a: "Octavia E. Butler" },
+      { t: "I change myself, I change the world.", a: "Gloria Anzaldúa" },
+      { t: "Hope will never be silent.", a: "Harvey Milk" }
+    ];
+
+    const AUTHORS = [
+      "maya angelou","james baldwin","toni morrison","audre lorde","zora neale hurston",
+      "martin luther king","malcolm x","shirley chisholm","angela davis","alice walker",
+      "langston hughes","frederick douglass","harriet tubman","rosa parks","booker t. washington",
+      "marcus garvey","cesar chavez","dolores huerta","frida kahlo","octavia",
+      "michelle obama","barack obama","malala","nelson mandela","desmond tutu",
+      "rumi","kahlil gibran","bruce lee","dalai lama","lao tzu","confucius",
+      "pablo neruda","gloria anzaldúa","anzaldua","bell hooks","roxane gay",
+      "gwendolyn brooks","oprah","issa rae","jackie robinson","muhammad ali",
+      "jesse owens","thurgood marshall","marsha p. johnson","harvey milk","laverne cox",
+      "chief joseph","chief seattle","joy harjo","wilma mankiller","sitting bull",
+      "lilla watson","june jordan","earth kitt","eartha kitt","whitney houston",
+      "derek walcott","chimamanda","chinua achebe","james weldon","sojourner truth",
+      "ida b. wells","w. e. b. du bois","web du bois","bayard rustin","james brown",
+      "prince","nina simone","james earl jones","denzel","viola davis","ava duvernay",
+      "lin-manuel","sonia sotomayor","ruth bader","yuri kochiyama","grace lee boggs",
+      "ocean vuong","viet thanh","george takei","yoko ono","patsy mink",
+      "sun ra","kobe","lebron","serena williams","naomi osaka","simone biles",
+      "amanda gorman","ibram","ta-nehisi","cornel west","bell hooks",
+      "james baldwin","toni","baldwin","morrison","lorde","angelou"
+    ];
+
+    function okAuthor(name) {
+      const n = (name || "").toLowerCase();
+      return AUTHORS.some(a => n.includes(a));
+    }
+
+    function randomColor() {
+      const h = Math.floor(Math.random() * 360);
+      const s = 38 + Math.floor(Math.random() * 47);
+      const l = 7 + Math.floor(Math.random() * 16);
+      document.body.style.background = "hsl(" + h + " " + s + "% " + l + "%)";
+    }
+
+    function show(q, source) {
+      document.getElementById("quote").textContent = q.t;
+      document.getElementById("who").innerHTML =
+        "<b>" + q.a + "</b><span>" + (source || "from the web") + "</span>";
+    }
+
+    async function grab(url, pick) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 4500);
+      try {
+        const res = await fetch(url, { signal: ctrl.signal });
+        if (!res.ok) throw new Error(res.status);
+        return pick(await res.json());
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function fromInternet() {
+      const tries = [];
+      tries.push(grab("https://dummyjson.com/quotes?limit=100", data => {
+        const list = (data.quotes || []).map(x => ({ t: x.quote, a: x.author }));
+        const hit = list.filter(q => okAuthor(q.a));
+        return (hit.length ? hit : list)[Math.floor(Math.random() * (hit.length ? hit.length : list.length))];
+      }));
+      tries.push(grab("https://zenquotes.io/api/quotes", data => {
+        const list = (Array.isArray(data) ? data : []).map(x => ({ t: x.q, a: x.a }));
+        const hit = list.filter(q => okAuthor(q.a));
+        const pool = hit.length ? hit : list;
+        if (!pool.length) throw new Error("empty");
+        return pool[Math.floor(Math.random() * pool.length)];
+      }));
+      tries.push(grab("https://dummyjson.com/quotes/random", data => ({ t: data.quote, a: data.author })));
+
+      const results = await Promise.allSettled(tries);
+      const good = results.filter(r => r.status === "fulfilled" && r.value && r.value.t).map(r => r.value);
+      const prefer = good.filter(q => okAuthor(q.a));
+      const pick = (prefer.length ? prefer : good);
+      if (!pick.length) throw new Error("offline");
+      return pick[Math.floor(Math.random() * pick.length)];
+    }
+
+    const sky = document.getElementById("stars");
+    for (let i = 0; i < 220; i++) {
+      const s = document.createElement("i");
+      s.className = "star";
+      const size = Math.random() < 0.1 ? 2.4 : 1.3;
+      s.style.width = size + "px";
+      s.style.height = size + "px";
+      s.style.left = Math.random() * 100 + "%";
+      s.style.top = Math.random() * 100 + "%";
+      sky.appendChild(s);
+    }
+
+    randomColor();
+    document.getElementById("quote").textContent = "Loading…";
+    fromInternet()
+      .then(q => show(q, "sourced from the web"))
+      .catch(() => {
+        const q = FALLBACK[Math.floor(Math.random() * FALLBACK.length)];
+        show(q, "offline backup");
+      });
+  </script>
+</body>
+</html>
