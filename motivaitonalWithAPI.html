@@ -96,11 +96,10 @@
       "derek walcott","chimamanda","chinua achebe","james weldon","sojourner truth",
       "ida b. wells","w. e. b. du bois","web du bois","bayard rustin","james brown",
       "prince","nina simone","james earl jones","denzel","viola davis","ava duvernay",
-      "lin-manuel","sonia sotomayor","ruth bader","yuri kochiyama","grace lee boggs",
+      "lin-manuel","sonia sotomayor","yuri kochiyama","grace lee boggs",
       "ocean vuong","viet thanh","george takei","yoko ono","patsy mink",
-      "sun ra","kobe","lebron","serena williams","naomi osaka","simone biles",
-      "amanda gorman","ibram","ta-nehisi","cornel west","bell hooks",
-      "james baldwin","toni","baldwin","morrison","lorde","angelou"
+      "sun ra","serena williams","naomi osaka","simone biles",
+      "amanda gorman","ibram","ta-nehisi","cornel west"
     ];
 
     function okAuthor(name) {
@@ -183,28 +182,54 @@
       }
     }
 
-    async function fromInternet() {
-      const tries = [];
-      tries.push(grab("https://dummyjson.com/quotes?limit=100", data => {
-        const list = (data.quotes || []).map(x => ({ t: x.quote, a: x.author }));
-        const hit = list.filter(q => okAuthor(q.a));
-        return (hit.length ? hit : list)[Math.floor(Math.random() * (hit.length ? hit.length : list.length))];
-      }));
-      tries.push(grab("https://zenquotes.io/api/quotes", data => {
-        const list = (Array.isArray(data) ? data : []).map(x => ({ t: x.q, a: x.a }));
-        const hit = list.filter(q => okAuthor(q.a));
-        const pool = hit.length ? hit : list;
-        if (!pool.length) throw new Error("empty");
-        return pool[Math.floor(Math.random() * pool.length)];
-      }));
-      tries.push(grab("https://dummyjson.com/quotes/random", data => ({ t: data.quote, a: data.author })));
+    const TZ = "America/Chicago";
+    function todayKey() {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit"
+      }).format(new Date());
+    }
+    function hash(str) {
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return Math.abs(h);
+    }
+    function pickDaily(list, key) {
+      if (!list.length) return null;
+      return list[hash(key) % list.length];
+    }
+    function cached(day) {
+      try {
+        const raw = localStorage.getItem("qotd:" + day);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) { return null; }
+    }
+    function save(day, q) {
+      try { localStorage.setItem("qotd:" + day, JSON.stringify(q)); } catch (e) {}
+    }
 
-      const results = await Promise.allSettled(tries);
-      const good = results.filter(r => r.status === "fulfilled" && r.value && r.value.t).map(r => r.value);
-      const prefer = good.filter(q => okAuthor(q.a));
-      const pick = (prefer.length ? prefer : good);
-      if (!pick.length) throw new Error("offline");
-      return pick[Math.floor(Math.random() * pick.length)];
+    async function fromInternet(day) {
+      const hit = cached(day);
+      if (hit && hit.t && hit.a) return hit;
+
+      const lists = await Promise.allSettled([
+        grab("https://dummyjson.com/quotes?limit=100", data =>
+          (data.quotes || []).map(x => ({ t: x.quote, a: x.author }))
+        ),
+        grab("https://zenquotes.io/api/quotes", data =>
+          (Array.isArray(data) ? data : []).map(x => ({ t: x.q, a: x.a }))
+        )
+      ]);
+      let pool = [];
+      for (const r of lists) if (r.status === "fulfilled") pool = pool.concat(r.value || []);
+      pool = pool.filter(q => q && q.t && q.a);
+      const prefer = pool.filter(q => okAuthor(q.a));
+      const q = pickDaily(prefer.length ? prefer : pool, day) || pickDaily(FALLBACK, day);
+      if (!q) throw new Error("offline");
+      save(day, q);
+      return q;
     }
 
     const sky = document.getElementById("stars");
@@ -221,10 +246,11 @@
 
     randomColor();
     document.getElementById("quote").textContent = "Loading…";
-    fromInternet()
+    const day = todayKey();
+    fromInternet(day)
       .then(async q => show(q, await roleFor(q.a)))
       .catch(async () => {
-        const q = FALLBACK[Math.floor(Math.random() * FALLBACK.length)];
+        const q = pickDaily(FALLBACK, day);
         show(q, await roleFor(q.a));
       });
   </script>
