@@ -83,13 +83,13 @@ File: `motivaitonalWithAPI.html`
 
 ---
 
-### Orrery / planet clock
+### Orrery
 
-`https://frankies2727.github.io/Digital-Brain-Notion-Widgets/orrery-5.html`
+`https://frankies2727.github.io/Digital-Brain-Notion-Widgets/orrery.html`
 
-Orbit-style clock.
+Live solar-system view. Planets sit at real-sky positions. No clock readout.
 
-File: `orrery-5.html`
+File: `orrery.html`
 
 ---
 
@@ -113,7 +113,7 @@ No build step. No npm. GitHub Pages serves the files as-is.
 | `index (6).html` | Days together |
 | `motivaitonalWithNoAPI.html` | Quotes, offline |
 | `motivaitonalWithAPI.html` | Quotes, API |
-| `orrery-5.html` | Planet clock |
+| `orrery.html` | Solar-system orrery |
 | `.nojekyll` | Tells Pages “just serve the files” |
 
 ---
