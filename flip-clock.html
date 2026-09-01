@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CDT Flip Clock</title>
+  <style>
+    :root {
+      --bg: #141414;
+      --card: #1c1c1c;
+      --card-bottom: #111111;
+      --ink: #f3f3f3;
+      --muted: #8a8a8a;
+      --line: #2a2a2a;
+      --accent: #e8e8e8;
+      --shadow: rgba(0, 0, 0, 0.45);
+      --digit-w: clamp(28px, 7.2vw, 58px);
+      --digit-h: clamp(42px, 10.6vw, 86px);
+      --date-w: clamp(20px, 5vw, 38px);
+      --date-h: clamp(30px, 7.4vw, 56px);
+      --letter-w: clamp(22px, 5.4vw, 42px);
+      --radius: 8px;
+      --flip: 280ms;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+
+    body.transparent { --bg: transparent; background: transparent; }
+    body.light {
+      --bg: #f4f1ea;
+      --card: #fffdf8;
+      --card-bottom: #efe8dc;
+      --ink: #1b1b1b;
+      --muted: #6b655c;
+      --line: #d9d1c4;
+      --accent: #1b1b1b;
+      --shadow: rgba(80, 60, 30, 0.18);
+    }
+    body.light.transparent { --bg: transparent; background: transparent; }
+
+    .wrap {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 10px 12px;
+    }
+
+    .board {
+      width: min(100%, 720px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(8px, 1.8vw, 16px);
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(4px, 1vw, 10px);
+      flex-wrap: nowrap;
+    }
+
+    .group {
+      display: flex;
+      align-items: center;
+      gap: clamp(3px, 0.6vw, 6px);
+    }
+
+    .colon {
+      color: var(--accent);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      font-size: calc(var(--digit-h) * 0.62);
+      line-height: 1;
+      padding-bottom: 4px;
+      opacity: 0.85;
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0.28; }
+    }
+
+    .slash, .dot {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: calc(var(--date-h) * 0.42);
+      letter-spacing: 0.04em;
+    }
+
+    .meta {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 10px;
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: clamp(10px, 2.2vw, 13px);
+    }
+
+    .meta strong {
+      color: var(--ink);
+      font-weight: 650;
+      letter-spacing: 0.16em;
+    }
+
+    .ampm-card {
+      width: clamp(36px, 8vw, 62px);
+      height: var(--digit-h);
+    }
+
+    .ampm-card .face span {
+      font-size: calc(var(--digit-h) * 0.28);
+      letter-spacing: 0.08em;
+    }
+
+    .tz {
+      min-width: 2.6em;
+      text-align: center;
+    }
+
+    .digit {
+      position: relative;
+      width: var(--digit-w);
+      height: var(--digit-h);
+      perspective: 500px;
+      font-family: "Arial Narrow", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .digit.date {
+      width: var(--date-w);
+      height: var(--date-h);
+    }
+
+    .digit.letter {
+      width: var(--letter-w);
+      height: var(--date-h);
+    }
+
+    .digit .unit {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: var(--radius);
+      box-shadow: 0 6px 16px var(--shadow);
+    }
+
+    .face, .flap {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      overflow: hidden;
+      background: var(--card);
+    }
+
+    .face.top, .flap.top {
+      top: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .face.bottom, .flap.bottom {
+      bottom: 0;
+      background: var(--card-bottom);
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .face span, .flap span {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 200%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(var(--digit-h) * 0.72);
+      line-height: 1;
+      text-align: center;
+    }
+
+    .digit.date span,
+    .digit.letter span {
+      font-size: calc(var(--date-h) * 0.68);
+    }
+
+    .face.top span, .flap.top span { top: 0; }
+    .face.bottom span, .flap.bottom span { bottom: 0; }
+
+    .flap.top {
+      transform-origin: bottom center;
+      z-index: 3;
+      backface-visibility: hidden;
+    }
+
+    .flap.bottom {
+      transform-origin: top center;
+      z-index: 2;
+      transform: rotateX(90deg);
+      backface-visibility: hidden;
+    }
+
+    .flap.top.play {
+      animation: flipTop var(--flip) ease-in forwards;
+    }
+
+    .flap.bottom.play {
+      animation: flipBottom var(--flip) ease-out forwards;
+      animation-delay: var(--flip);
+    }
+
+    @keyframes flipTop {
+      0% { transform: rotateX(0deg); }
+      100% { transform: rotateX(-90deg); }
+    }
+
+    @keyframes flipBottom {
+      0% { transform: rotateX(90deg); }
+      100% { transform: rotateX(0deg); }
+    }
+
+    .hinge {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background: var(--line);
+      z-index: 4;
+      pointer-events: none;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    @media (max-width: 420px) {
+      .meta { letter-spacing: 0.1em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="board">
+      <div class="row" id="dateRow" aria-label="Date"></div>
+      <div class="row" id="timeRow" aria-label="Time"></div>
+      <div class="meta">
+        <span id="weekday">—</span>
+        <strong class="tz" id="tzLabel">CDT</strong>
+        <span id="city">Chicago</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TZ = "America/Chicago";
+    const params = new URLSearchParams(location.search);
+    const hour12 = params.get("format") !== "24";
+    const theme = params.get("theme") || "dark";
+    if (theme === "light") document.body.classList.add("light");
+    if (params.get("bg") === "transparent") document.body.classList.add("transparent");
+
+    const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const DIGITS = "0123456789";
+
+    function createDigit(kind) {
+      const el = document.createElement("div");
+      el.className = "digit" + (kind ? " " + kind : "");
+      el.innerHTML = `
+        <div class="unit">
+          <div class="face top"><span>0</span></div>
+          <div class="face bottom"><span>0</span></div>
+          <div class="flap top"><span>0</span></div>
+          <div class="flap bottom"><span>0</span></div>
+          <div class="hinge"></div>
+        </div>
+      `;
+      const faces = {
+        top: el.querySelector(".face.top span"),
+        bottom: el.querySelector(".face.bottom span"),
+        flapTop: el.querySelector(".flap.top"),
+        flapBottom: el.querySelector(".flap.bottom"),
+        flapTopSpan: el.querySelector(".flap.top span"),
+        flapBottomSpan: el.querySelector(".flap.bottom span")
+      };
+      return { el, value: null, flipping: false, queue: null, faces };
+    }
+
+    function setImmediate(digit, value) {
+      const v = String(value);
+      digit.value = v;
+      digit.faces.top.textContent = v;
+      digit.faces.bottom.textContent = v;
+      digit.faces.flapTopSpan.textContent = v;
+      digit.faces.flapBottomSpan.textContent = v;
+    }
+
+    function flipTo(digit, value) {
+      const next = String(value);
+      if (digit.value === next) return;
+      if (digit.value === null) {
+        setImmediate(digit, next);
+        return;
+      }
+      if (digit.flipping) {
+        digit.queue = next;
+        return;
+      }
+
+      const from = digit.value;
+      digit.flipping = true;
+      digit.value = next;
+
+      const { top, bottom, flapTop, flapBottom, flapTopSpan, flapBottomSpan } = digit.faces;
+      top.textContent = next;
+      flapTopSpan.textContent = from;
+      flapBottomSpan.textContent = next;
+      bottom.textContent = from;
+
+      flapTop.classList.remove("play");
+      flapBottom.classList.remove("play");
+      void flapTop.offsetWidth;
+      flapTop.classList.add("play");
+      flapBottom.classList.add("play");
+
+      const done = () => {
+        bottom.textContent = next;
+        flapTopSpan.textContent = next;
+        flapTop.classList.remove("play");
+        flapBottom.classList.remove("play");
+        flapTop.style.transform = "";
+        flapBottom.style.transform = "";
+        digit.flipping = false;
+        flapBottom.removeEventListener("animationend", done);
+        if (digit.queue !== null && digit.queue !== digit.value) {
+          const queued = digit.queue;
+          digit.queue = null;
+          flipTo(digit, queued);
+        } else {
+          digit.queue = null;
+        }
+      };
+      flapBottom.addEventListener("animationend", done);
+    }
+
+    function sep(text, className) {
+      const el = document.createElement("div");
+      el.className = className;
+      el.textContent = text;
+      return el;
+    }
+
+    function group(children) {
+      const el = document.createElement("div");
+      el.className = "group";
+      children.forEach((c) => el.appendChild(c.el || c));
+      return el;
+    }
+
+    const dateRow = document.getElementById("dateRow");
+    const timeRow = document.getElementById("timeRow");
+
+    const monthLetters = [0, 1, 2].map(() => createDigit("letter"));
+    const dayDigits = [0, 1].map(() => createDigit("date"));
+    const yearDigits = [0, 1, 2, 3].map(() => createDigit("date"));
+    dateRow.append(
+      group(monthLetters),
+      sep("·", "dot"),
+      group(dayDigits),
+      sep("·", "dot"),
+      group(yearDigits)
+    );
+
+    const hourDigits = [0, 1].map(() => createDigit(""));
+    const minuteDigits = [0, 1].map(() => createDigit(""));
+    const secondDigits = [0, 1].map(() => createDigit(""));
+    const ampm = createDigit("ampm-card");
+    timeRow.append(
+      group(hourDigits),
+      sep(":", "colon"),
+      group(minuteDigits),
+      sep(":", "colon"),
+      group(secondDigits)
+    );
+    if (hour12) timeRow.append(ampm.el);
+
+    const fmt = new Intl.DateTimeFormat("en-US", {
+      timeZone: TZ,
+      weekday: "long",
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: hour12 ? "h12" : "h23",
+      timeZoneName: "short"
+    });
+
+    function parts(now) {
+      const bag = {};
+      for (const p of fmt.formatToParts(now)) bag[p.type] = p.value;
+      return bag;
+    }
+
+    function paint(now, animate) {
+      const p = parts(now);
+      const month = (p.month || "JAN").toUpperCase().slice(0, 3).padEnd(3, " ");
+      const day = String(p.day || "01").padStart(2, "0");
+      const year = String(p.year || "0000").padStart(4, "0");
+      const hour = String(p.hour || "00").padStart(2, "0");
+      const minute = String(p.minute || "00").padStart(2, "0");
+      const second = String(p.second || "00").padStart(2, "0");
+      const mer = (p.dayPeriod || "").replace(/\./g, "").toUpperCase().slice(0, 2) || "";
+      const tz = p.timeZoneName || "CT";
+
+      const apply = animate ? flipTo : setImmediate;
+      month.split("").forEach((ch, i) => apply(monthLetters[i], LETTERS.includes(ch) ? ch : " "));
+      day.split("").forEach((ch, i) => apply(dayDigits[i], DIGITS.includes(ch) ? ch : "0"));
+      year.split("").forEach((ch, i) => apply(yearDigits[i], DIGITS.includes(ch) ? ch : "0"));
+      hour.split("").forEach((ch, i) => apply(hourDigits[i], DIGITS.includes(ch) ? ch : "0"));
+      minute.split("").forEach((ch, i) => apply(minuteDigits[i], DIGITS.includes(ch) ? ch : "0"));
+      second.split("").forEach((ch, i) => apply(secondDigits[i], DIGITS.includes(ch) ? ch : "0"));
+      if (hour12) apply(ampm, mer || "AM");
+
+      document.getElementById("weekday").textContent = (p.weekday || "").toUpperCase();
+      document.getElementById("tzLabel").textContent = tz;
+    }
+
+    let lastSecond = null;
+    function tick() {
+      const now = new Date();
+      const p = parts(now);
+      if (p.second !== lastSecond) {
+        paint(now, lastSecond !== null);
+        lastSecond = p.second;
+      }
+      requestAnimationFrame(tick);
+    }
+
+    paint(new Date(), false);
+    requestAnimationFrame(tick);
+  </script>
+</body>
+</html>
