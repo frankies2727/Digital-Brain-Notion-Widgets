@@ -84,7 +84,7 @@
       font-size: calc(var(--digit-h) * 0.62);
       line-height: 1;
       padding-bottom: 4px;
-      opacity: 0.85;
+      opacity: 1;
       animation: blink 1s steps(1) infinite;
     }
 
@@ -93,8 +93,8 @@
     }
 
     .slash, .dot {
-      color: var(--muted);
-      font-weight: 600;
+      color: var(--ink);
+      font-weight: 700;
       font-size: calc(var(--date-h) * 0.42);
       letter-spacing: 0.04em;
     }
@@ -104,26 +104,17 @@
       align-items: baseline;
       justify-content: center;
       gap: 10px;
-      color: var(--muted);
+      color: var(--ink);
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      font-size: clamp(10px, 2.2vw, 13px);
+      font-size: clamp(11px, 2.4vw, 14px);
+      font-weight: 650;
     }
 
     .meta strong {
       color: var(--ink);
-      font-weight: 650;
+      font-weight: 750;
       letter-spacing: 0.16em;
-    }
-
-    .ampm-card {
-      width: clamp(36px, 8vw, 62px);
-      height: var(--digit-h);
-    }
-
-    .ampm-card .face span {
-      font-size: calc(var(--digit-h) * 0.28);
-      letter-spacing: 0.08em;
     }
 
     .tz {
@@ -243,6 +234,30 @@
       z-index: 4;
       pointer-events: none;
       box-shadow: 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .ampm-card {
+      width: clamp(28px, 6.2vw, 46px);
+      height: var(--digit-h);
+      margin-left: 4px;
+    }
+
+    .ampm-card .face span,
+    .ampm-card .flap span {
+      height: 100%;
+      font-size: calc(var(--digit-h) * 0.36);
+      letter-spacing: 0.02em;
+      font-weight: 800;
+    }
+
+    .ampm-card .face.top span,
+    .ampm-card .flap.top span {
+      top: 0;
+    }
+
+    .ampm-card .face.bottom span,
+    .ampm-card .flap.bottom span {
+      bottom: 0;
     }
 
     @media (max-width: 420px) {
@@ -395,6 +410,31 @@
     );
     if (hour12) timeRow.append(ampm.el);
 
+    function setAmpm(period, animate) {
+      const mer = period === "PM" ? "PM" : "AM";
+      const topLetter = mer[0];
+      if (ampm.value === mer) return;
+      if (!animate || ampm.value === null) {
+        ampm.value = mer;
+        ampm.faces.top.textContent = topLetter;
+        ampm.faces.bottom.textContent = "M";
+        ampm.faces.flapTopSpan.textContent = topLetter;
+        ampm.faces.flapBottomSpan.textContent = "M";
+        return;
+      }
+      const from = ampm.value[0];
+      ampm.value = mer;
+      ampm.faces.top.textContent = topLetter;
+      ampm.faces.bottom.textContent = "M";
+      ampm.faces.flapTopSpan.textContent = from;
+      ampm.faces.flapBottomSpan.textContent = "M";
+      ampm.faces.flapTop.classList.remove("play");
+      ampm.faces.flapBottom.classList.remove("play");
+      void ampm.faces.flapTop.offsetWidth;
+      ampm.faces.flapTop.classList.add("play");
+      ampm.faces.flapBottom.classList.add("play");
+    }
+
     const fmt = new Intl.DateTimeFormat("en-US", {
       timeZone: TZ,
       weekday: "long",
@@ -432,7 +472,7 @@
       hour.split("").forEach((ch, i) => apply(hourDigits[i], DIGITS.includes(ch) ? ch : "0"));
       minute.split("").forEach((ch, i) => apply(minuteDigits[i], DIGITS.includes(ch) ? ch : "0"));
       second.split("").forEach((ch, i) => apply(secondDigits[i], DIGITS.includes(ch) ? ch : "0"));
-      if (hour12) apply(ampm, mer || "AM");
+      if (hour12) setAmpm(mer || "AM", animate);
 
       document.getElementById("weekday").textContent = (p.weekday || "").toUpperCase();
       document.getElementById("tzLabel").textContent = tz;
