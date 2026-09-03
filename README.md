@@ -16,6 +16,14 @@ https://frankies2727.github.io/Digital-Brain-Notion-Widgets/
 
 Each file is one embed. Open Notion → type <kbd>/embed</kbd> → paste a link → stretch the block.
 
+<p>
+  <a href="https://frankies2727.github.io/Digital-Brain-Notion-Widgets/flip-clock.html">
+    <img src="https://image.thum.io/get/width/1400/crop/720/noanimate/https://frankies2727.github.io/Digital-Brain-Notion-Widgets/flip-clock.html" alt="Flip clock widget" width="820">
+  </a>
+</p>
+
+<sub>GitHub blocks live HTML in READMEs. These are pictures of the real widgets. Click any image to open the live one.</sub>
+
 </div>
 
 ---
@@ -55,20 +63,19 @@ flowchart LR
 
 ## 🎨 Widget gallery
 
-Pick a card. Copy the URL. That is the whole job.
+Pictures first. URL under each one.
 
 </div>
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
 ### ⏱️ Flip clock
-[![preview](https://img.shields.io/badge/live-open%20widget-111827?style=for-the-badge&labelColor=FF6B35)](https://frankies2727.github.io/Digital-Brain-Notion-Widgets/flip-clock.html)
 
-Split-flap **date + time + seconds**.
-Always `America/Chicago`.
-Label flips **CDT** ↔ **CST** by itself.
+<div align="center">
+
+[![Flip clock](https://image.thum.io/get/width/1400/crop/720/noanimate/https://frankies2727.github.io/Digital-Brain-Notion-Widgets/flip-clock.html)](https://frankies2727.github.io/Digital-Brain-Notion-Widgets/flip-clock.html)
+
+</div>
+
+Split-flap **date + time + seconds**. Always `America/Chicago`. Label flips **CDT** ↔ **CST** by itself.
 
 ```
 https://frankies2727.github.io/Digital-Brain-Notion-Widgets/flip-clock.html
@@ -82,31 +89,35 @@ https://frankies2727.github.io/Digital-Brain-Notion-Widgets/flip-clock.html
 | ✨ both | `?theme=light&bg=transparent` |
 
 ```
-.../flip-clock.html?format=24
-.../flip-clock.html?theme=light&bg=transparent
+https://frankies2727.github.io/Digital-Brain-Notion-Widgets/flip-clock.html?format=24
+https://frankies2727.github.io/Digital-Brain-Notion-Widgets/flip-clock.html?theme=light&bg=transparent
 ```
 
-</td>
-<td width="50%" valign="top">
+---
 
 ### 🌌 Orrery
-[![preview](https://img.shields.io/badge/live-open%20widget-111827?style=for-the-badge&labelColor=7C3AED)](https://frankies2727.github.io/Digital-Brain-Notion-Widgets/orrery.html)
 
-Live solar system. Planets sit where they actually are. No clock readout. Quieter starfield.
+<div align="center">
+
+[![Orrery](https://image.thum.io/get/width/1400/crop/800/noanimate/https://frankies2727.github.io/Digital-Brain-Notion-Widgets/orrery.html)](https://frankies2727.github.io/Digital-Brain-Notion-Widgets/orrery.html)
+
+</div>
+
+Live solar system. Planets sit where they actually are. No clock readout.
 
 ```
 https://frankies2727.github.io/Digital-Brain-Notion-Widgets/orrery.html
 ```
 
-File: `orrery.html`
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
+---
 
 ### 💖 Days together
-[![preview](https://img.shields.io/badge/live-open%20widget-111827?style=for-the-badge&labelColor=EC4899)](https://frankies2727.github.io/Digital-Brain-Notion-Widgets/index%20(6).html)
+
+<div align="center">
+
+[![Days together](https://image.thum.io/get/width/1400/crop/720/noanimate/https://frankies2727.github.io/Digital-Brain-Notion-Widgets/index%20(6).html)](https://frankies2727.github.io/Digital-Brain-Notion-Widgets/index%20(6).html)
+
+</div>
 
 Live day count from the FIRE Conference start date.
 
@@ -114,14 +125,17 @@ Live day count from the FIRE Conference start date.
 https://frankies2727.github.io/Digital-Brain-Notion-Widgets/index%20(6).html
 ```
 
-File: `index (6).html`  
-Filename has a space — use the encoded URL above.
+File: `index (6).html` — filename has a space, so use the encoded URL above.
 
-</td>
-<td width="50%" valign="top">
+---
 
 ### ✨ Quotes — offline
-[![preview](https://img.shields.io/badge/live-open%20widget-111827?style=for-the-badge&labelColor=22C55E)](https://frankies2727.github.io/Digital-Brain-Notion-Widgets/motivaitonalWithNoAPI.html)
+
+<div align="center">
+
+[![Quotes offline](https://image.thum.io/get/width/1400/crop/720/noanimate/https://frankies2727.github.io/Digital-Brain-Notion-Widgets/motivaitonalWithNoAPI.html)](https://frankies2727.github.io/Digital-Brain-Notion-Widgets/motivaitonalWithNoAPI.html)
+
+</div>
 
 Works with no quote API. Safer default.
 
@@ -129,27 +143,21 @@ Works with no quote API. Safer default.
 https://frankies2727.github.io/Digital-Brain-Notion-Widgets/motivaitonalWithNoAPI.html
 ```
 
-File: `motivaitonalWithNoAPI.html`
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top" colspan="2">
+---
 
 ### 🌐 Quotes — with API
-[![preview](https://img.shields.io/badge/live-open%20widget-111827?style=for-the-badge&labelColor=0EA5E9)](https://frankies2727.github.io/Digital-Brain-Notion-Widgets/motivaitonalWithAPI.html)
+
+<div align="center">
+
+[![Quotes API](https://image.thum.io/get/width/1400/crop/720/noanimate/https://frankies2727.github.io/Digital-Brain-Notion-Widgets/motivaitonalWithAPI.html)](https://frankies2727.github.io/Digital-Brain-Notion-Widgets/motivaitonalWithAPI.html)
+
+</div>
 
 Same vibe, pulls quotes from an API. Use only if the offline one is not enough.
 
 ```
 https://frankies2727.github.io/Digital-Brain-Notion-Widgets/motivaitonalWithAPI.html
 ```
-
-File: `motivaitonalWithAPI.html`
-
-</td>
-</tr>
-</table>
 
 ---
 
@@ -196,6 +204,7 @@ No build. No npm. Pages serves the files as-is.
 | 📎 **embed looks tiny** | stretch the Notion block — the widget fills the iframe |
 | 🕒 **wrong time zone** | flip clock ignores the browser zone. It is Chicago-only |
 | ⏸️ **want 24-hour** | add `?format=24` to the flip-clock URL |
+| 🖼️ **README image is blank** | wait a few seconds and refresh — the screenshot service is catching up |
 
 <div align="center">
 
