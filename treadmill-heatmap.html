@@ -103,7 +103,7 @@
     const params = new URLSearchParams(location.search);
     if ((params.get("theme") || "dark") === "light") document.body.classList.add("light");
     if (params.get("bg") === "transparent") document.body.classList.add("transparent");
-    const whoFilter = (params.get("who") || "all").toLowerCase();
+    const whoFilter = (params.get("who") || "frankie").toLowerCase();
     const FRANKIE = "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e";
     const CECI = "ce531e95-27f3-43be-8f40-8daecefe9c34";
     const ALIASES = { me: FRANKIE, frankie: FRANKIE, ceci: CECI };
