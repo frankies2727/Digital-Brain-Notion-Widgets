@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-20T11:02:56-05:00",
+  "updated": "2026-09-21T11:30:00-05:00",
   "source": "Treadmill Utilization",
   "database_id": "c89f1d0ea6b382c8ac51811824457c0e",
   "people": {
@@ -7,96 +7,22 @@
     "ce531e95-27f3-43be-8f40-8daecefe9c34": "Ceci"
   },
   "entries": [
-    {
-      "date": "2026-08-27",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-08-27",
-      "steps": 2100.0,
-      "who": "ce531e95-27f3-43be-8f40-8daecefe9c34",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-08-28",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-08-29",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-08-30",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-08-31",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-09-01",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-09-02",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-09-03",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-09-04",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-09-06",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-09-09",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-09-13",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-09-17",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    },
-    {
-      "date": "2026-09-18",
-      "steps": 3000.0,
-      "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e",
-      "name": "Walking Steps"
-    }
+    {"date": "2026-08-27", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-08-27", "steps": 2100, "who": "ce531e95-27f3-43be-8f40-8daecefe9c34", "name": "Walking Steps"},
+    {"date": "2026-08-28", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-08-29", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-08-30", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-08-31", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-09-01", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-09-02", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-09-03", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-09-04", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-09-06", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-09-09", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-09-13", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-09-17", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-09-18", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"},
+    {"date": "2026-09-20", "steps": 3000, "who": "4a463c93-3bc7-49ef-b1b1-fb8c5fe0618e", "name": "Walking Steps"}
   ],
-  "generated_utc": "2026-09-20T16:02:56Z"
+  "generated_utc": "2026-09-21T16:30:00Z"
 }
