@@ -46,17 +46,33 @@
     .dows { display: grid; grid-template-rows: repeat(7, var(--cell)); gap: var(--gap); font-size: 9px; color: var(--muted); padding-top: 14px; }
     .dows span { display: flex; align-items: center; height: var(--cell); }
     .dows span.blank { visibility: hidden; }
-    .grid-wrap { min-width: 0; overflow: hidden; }
+    .grid-wrap { min-width: 0; overflow: hidden; touch-action: manipulation; }
     .scroller { width: 100%; }
     .months { display: grid; grid-auto-flow: column; grid-auto-columns: var(--cell); gap: var(--gap); height: 14px; margin-bottom: 2px; font-size: 9px; color: var(--muted); }
     .weeks { display: grid; grid-auto-flow: column; grid-auto-columns: var(--cell); gap: var(--gap); width: 100%; }
     .week { display: grid; grid-template-rows: repeat(7, var(--cell)); gap: var(--gap); }
-    .cell { width: var(--cell); height: var(--cell); border-radius: 2px; background: var(--tile0); }
+    .cell {
+      width: var(--cell); height: var(--cell); border-radius: 2px; background: var(--tile0);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
     .cell.l1 { background: var(--tile1); }
     .cell.l2 { background: var(--tile2); }
     .cell.l3 { background: var(--tile3); }
     .cell.l4 { background: var(--tile4); }
     .cell.future { opacity: 0.28; }
+    .cell.on { outline: 2px solid #fff; outline-offset: 0; z-index: 1; }
+    body.light .cell.on { outline-color: #111; }
+    .detail {
+      margin-top: 8px;
+      min-height: 32px;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--ink);
+      background: color-mix(in srgb, var(--bg) 70%, #000 30%);
+    }
+    .detail span { color: var(--muted); }
     .foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; color: var(--muted); font-size: 10px; }
     .legend { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
     .legend i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; background: var(--tile0); }
@@ -66,6 +82,7 @@
     .legend i.l4 { background: var(--tile4); }
     .tip { position: fixed; z-index: 9; pointer-events: none; background: var(--tip-bg); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; font-size: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.35); opacity: 0; transform: translate(-50%, calc(-100% - 8px)); white-space: nowrap; }
     .tip.on { opacity: 1; }
+    @media (hover: none) { .tip { display: none; } }
   </style>
 </head>
 <body>
@@ -80,7 +97,7 @@
           <span class="blank">Sun</span>
           <span>Mon</span>
           <span class="blank">Tue</span>
-          <span>Wed</span>
+          <span class="blank">Wed</span>
           <span class="blank">Thu</span>
           <span>Fri</span>
           <span class="blank">Sat</span>
@@ -92,6 +109,7 @@
           </div>
         </div>
       </div>
+      <div class="detail" id="detail">Tap a square for that day’s steps</div>
       <div class="foot">
         <span id="meta">Treadmill Utilization</span>
         <div class="legend">Less <i></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> More</div>
@@ -113,19 +131,7 @@
       people: { [FRANKIE]: "Frankie", [CECI]: "Ceci" },
       entries: [
         { date: "2026-08-27", steps: 2100, who: CECI },
-        { date: "2026-08-27", steps: 3000, who: FRANKIE },
-        { date: "2026-08-28", steps: 3000, who: FRANKIE },
-        { date: "2026-08-29", steps: 3000, who: FRANKIE },
-        { date: "2026-08-30", steps: 3000, who: FRANKIE },
-        { date: "2026-08-31", steps: 3000, who: FRANKIE },
-        { date: "2026-09-01", steps: 3000, who: FRANKIE },
-        { date: "2026-09-02", steps: 3000, who: FRANKIE },
-        { date: "2026-09-03", steps: 3000, who: FRANKIE },
-        { date: "2026-09-04", steps: 3000, who: FRANKIE },
-        { date: "2026-09-06", steps: 3000, who: FRANKIE },
-        { date: "2026-09-09", steps: 3000, who: FRANKIE },
-        { date: "2026-09-13", steps: 3000, who: FRANKIE },
-        { date: "2026-09-17", steps: 3000, who: FRANKIE }
+        { date: "2026-08-27", steps: 3000, who: FRANKIE }
       ]
     };
     function chicagoISO(d) {
@@ -185,19 +191,73 @@
       return cell;
     }
     const tip = document.getElementById("tip");
-    function showTip(el, text) {
+    const detail = document.getElementById("detail");
+    let selected = null;
+    function cellLabel(el) {
+      const steps = Number(el.dataset.steps) || 0;
+      const iso = el.dataset.date;
+      return steps ? fmtNum(steps) + " steps on " + niceDate(iso) : "No treadmill on " + niceDate(iso);
+    }
+    function showTip(el) {
       const r = el.getBoundingClientRect();
-      tip.textContent = text;
-      tip.style.left = r.left + r.width / 2 + "px";
+      tip.textContent = cellLabel(el);
+      const x = Math.min(window.innerWidth - 8, Math.max(8, r.left + r.width / 2));
+      tip.style.left = x + "px";
       tip.style.top = r.top + "px";
       tip.classList.add("on");
     }
     function hideTip() { tip.classList.remove("on"); }
+    function selectCell(el) {
+      if (selected) selected.classList.remove("on");
+      selected = el;
+      if (!el) {
+        detail.innerHTML = "Tap a square for that day’s steps";
+        hideTip();
+        return;
+      }
+      el.classList.add("on");
+      const steps = Number(el.dataset.steps) || 0;
+      const iso = el.dataset.date;
+      detail.innerHTML = steps
+        ? "<strong>" + fmtNum(steps) + " steps</strong> <span>· " + niceDate(iso) + "</span>"
+        : "<span>No treadmill · " + niceDate(iso) + "</span>";
+    }
+    function closestCell(x, y) {
+      const nodes = document.querySelectorAll(".cell");
+      let best = null;
+      let bestD = Infinity;
+      for (const el of nodes) {
+        const r = el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const d = Math.hypot(x - cx, y - cy);
+        if (d < bestD) { bestD = d; best = el; }
+      }
+      const slop = 22;
+      return bestD <= slop ? best : null;
+    }
+    function onInspect(ev) {
+      const x = ev.clientX ?? (ev.touches && ev.touches[0] && ev.touches[0].clientX);
+      const y = ev.clientY ?? (ev.touches && ev.touches[0] && ev.touches[0].clientY);
+      if (x == null) return;
+      const hit = ev.target.closest && ev.target.closest(".cell") || closestCell(x, y);
+      if (!hit) return;
+      ev.preventDefault();
+      selectCell(hit);
+      if (window.matchMedia("(hover: hover)").matches) showTip(hit);
+    }
+    document.getElementById("gridWrap").addEventListener("pointerdown", onInspect);
+    document.getElementById("gridWrap").addEventListener("click", onInspect);
+    document.addEventListener("pointerdown", (ev) => {
+      if (!ev.target.closest(".cell") && !ev.target.closest("#detail")) hideTip();
+    });
     let lastData = null;
     let lastYear = new Date().getFullYear();
     function paint(data, year) {
       lastData = data;
       lastYear = year;
+      selected = null;
+      detail.innerHTML = "Tap a square for that day’s steps";
       const rows = filterEntries(data);
       const byDay = totals(rows);
       const today = chicagoISO(new Date());
@@ -230,8 +290,11 @@
         const cell = document.createElement("div");
         const lv = level(steps);
         cell.className = "cell" + (lv ? " l" + lv : "") + (iso > today ? " future" : "");
-        const label = steps ? fmtNum(steps) + " steps on " + niceDate(iso) : "No treadmill on " + niceDate(iso);
-        cell.addEventListener("mouseenter", () => showTip(cell, label));
+        cell.dataset.date = iso;
+        cell.dataset.steps = String(steps);
+        cell.addEventListener("mouseenter", () => {
+          if (window.matchMedia("(hover: hover)").matches) showTip(cell);
+        });
         cell.addEventListener("mouseleave", hideTip);
         week.appendChild(cell);
         cursor = addDays(cursor, 1);
